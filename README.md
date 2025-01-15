@@ -16,12 +16,11 @@ RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=2
 | AddOptimalFix2 | 0.5  |   718.5 ms | 16.18 ms | 4.20 ms |  0.67 |
 
 ```
-
 BenchmarkDotNet v0.14.0, Windows 10 (10.0.20348.2849)
 Intel Core i7-10700K CPU 3.80GHz, 1 CPU, 16 logical and 8 physical cores
-.NET SDK 9.0.101
-  [Host]     : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX2
-  Job-UGBIFC : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX2
+.NET SDK 9.0.102
+  [Host]     : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX2
+  Job-PNDHCV : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX2
 
 InvocationCount=1  IterationCount=5  LaunchCount=1  
 RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=2  
@@ -29,9 +28,9 @@ RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=2
 ```
 | Method         | Load | Mean       | Error    | StdDev  | Ratio |
 |--------------- |----- |-----------:|---------:|--------:|------:|
-| AddOptimal     | 0.5  | 1,376.6 ms |  7.05 ms | 1.83 ms |  1.00 |
-| AddOptimalFix1 | 0.5  |   567.9 ms | 12.99 ms | 3.37 ms |  0.41 |
-| AddOptimalFix2 | 0.5  |   564.8 ms | 14.80 ms | 3.84 ms |  0.41 |
+| AddOptimal     | 0.5  | 1,413.3 ms | 33.91 ms | 8.81 ms |  1.00 |
+| AddOptimalFix1 | 0.5  |   567.7 ms | 13.66 ms | 3.55 ms |  0.40 |
+| AddOptimalFix2 | 0.5  |   570.7 ms |  9.24 ms | 2.40 ms |  0.40 |
 
 
 ```
