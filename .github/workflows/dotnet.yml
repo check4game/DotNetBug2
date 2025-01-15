@@ -24,8 +24,8 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore DotNetBug2.sln
 
-    - name: Restore nuget packages
-      run: nuget restore DotNetBug2.sln
+    #- name: Restore nuget packages
+    #  run: nuget restore DotNetBug2.sln
 
     - name: Build
       run: dotnet build --no-restore
