@@ -22,10 +22,10 @@ jobs:
         dotnet-version: 9.0.x
 
     - name: Restore dependencies
-      run: dotnet restore  Faster.Map.sln
+      run: dotnet restore DotNetBug2.sln
 
     - name: Restore nuget packages
-      run: nuget restore Faster.Map.sln
+      run: nuget restore DotNetBug2.sln
 
     - name: Build
       run: dotnet build --no-restore
