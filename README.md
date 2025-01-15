@@ -1,4 +1,4 @@
-**perfomance 'old' intel CPU**
+# Performance slows down on "OLD" processors
 
 ```
 BenchmarkDotNet v0.14.0, Windows 10 (10.0.20348.2849)
