@@ -13,7 +13,7 @@ jobs:
   build:
 
     #runs-on: ubuntu-latest
-    runs-on: windows-latest
+    #runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v4
@@ -22,14 +22,14 @@ jobs:
       with:
         dotnet-version: 9.0.x
 
-    - name: Restore dependencies
-      run: dotnet restore DotNetBug2.sln
+    #- name: Restore dependencies
+    #  run: dotnet restore DotNetBug2.sln
 
     #- name: Restore nuget packages
     #  run: nuget restore DotNetBug2.sln
 
-    - name: Build
-      run: dotnet build --no-restore -c Release
+    #- name: Build
+    #  run: dotnet build --no-restore -c Release
 
-    - name: Run
-      run: dotnet run --no-build --no-restore --verbosity normal -c Release
+    #- name: Run
+    #  run: dotnet run --no-build --no-restore --verbosity normal -c Release
