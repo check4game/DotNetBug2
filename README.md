@@ -16,71 +16,13 @@ RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=2
 | AddOptimalFix2 | 0.5  |   570.7 ms |  9.24 ms | 2.40 ms |  0.40 |
 
 AddOptimal 1413ms, it's problem! On modern CPUs AddOptimal is faster than  AddOptimalFix1 or  AddOptimalFix2
-
 https://github.com/check4game/DotNetBug2/blob/d5062aadf60fbefe4351b4ae48acad3e5de88448/DotNetBug2.cs#L159-L172
-```c#
-var emptyMask = Vector128.Equals(source, _emptyBucketVector).ExtractMostSignificantBits();
-
-// Check for empty buckets in the current vector.
-
-if (emptyMask != 0)
-{
-    index += (uint)BitOperations.TrailingZeroCount(emptyMask);
-
-    Find(_controlBytes, index) = h2;
-    Find(_entries, index) = key;
-
-    Count++;
-
-    return;
-}
-``` 
-
 
 AddOptimalFix1 567ms
 https://github.com/check4game/DotNetBug2/blob/d5062aadf60fbefe4351b4ae48acad3e5de88448/DotNetBug2.cs#L217-L233
-```c#
-var emptyMask = Vector128.Equals(source, _emptyBucketVector).ExtractMostSignificantBits();
-
-// Check for empty buckets in the current vector.
-
-if (emptyMask != 0)
-{
-    if (_emptyBucket != Find(_controlBytes, index))
-    {
-        index += (uint)BitOperations.TrailingZeroCount(emptyMask);
-    }
-
-    Find(_controlBytes, index) = h2;
-    Find(_entries, index) = key;
-
-    Count++;
-
-    return;
-}
-```
-
 
 AddOptimalFix2 570ms
 https://github.com/check4game/DotNetBug2/blob/d5062aadf60fbefe4351b4ae48acad3e5de88448/DotNetBug2.cs#L278-L291
-
-```c#
-var emptyMask = Vector128.Equals(source, _emptyBucketVector).ExtractMostSignificantBits();
-
-// Check for empty buckets in the current vector.
-
-if (emptyMask != 0)
-{
-    while (_emptyBucket != Find(_controlBytes, index)) index++;
-
-    Find(_controlBytes, index) = h2;
-    Find(_entries, index) = key;
-
-    Count++;
-
-    return;
-}
-```
 
 ```
 BenchmarkDotNet v0.14.0, Windows 10 (10.0.19045.4170/22H2/2022Update)
