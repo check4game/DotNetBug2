@@ -1,5 +1,4 @@
 ```
-
 BenchmarkDotNet v0.14.0, Windows 10 (10.0.19045.4170/22H2/2022Update)
 Intel Core i7-2700K CPU 3.50GHz (Sandy Bridge), 1 CPU, 8 logical and 4 physical cores
 .NET SDK 9.0.102
@@ -8,30 +7,12 @@ Intel Core i7-2700K CPU 3.50GHz (Sandy Bridge), 1 CPU, 8 logical and 4 physical 
 
 InvocationCount=1  IterationCount=5  LaunchCount=1  
 RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=2  
-
 ```
 | Method         | Load | Mean       | Error    | StdDev  | Ratio |
 |--------------- |----- |-----------:|---------:|--------:|------:|
 | AddOptimal     | 0.5  | 2,018.7 ms |  8.89 ms | 2.31 ms |  1.00 |
 | AddOptimalFix1 | 0.5  |   962.1 ms | 36.18 ms | 9.40 ms |  0.48 |
 | AddOptimalFix2 | 0.5  |   963.6 ms | 12.87 ms | 3.34 ms |  0.48 |
-
-```
-BenchmarkDotNet v0.14.0, Windows 11 (10.0.26100.2894)
-AMD Ryzen 5 5500U with Radeon Graphics, 1 CPU, 12 logical and 6 physical cores
-.NET SDK 9.0.102
-  [Host]     : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX2
-  Job-YUKPSM : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX2
-
-InvocationCount=1  IterationCount=5  LaunchCount=1  
-RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=2  
-```
-
-| Method         | Load | Mean       | Error    | StdDev  | Ratio |
-|--------------- |----- |-----------:|---------:|--------:|------:|
-| AddOptimal     | 0.5  | 1,071.2 ms |  6.36 ms | 1.65 ms |  1.00 |
-| AddOptimalFix1 | 0.5  |   728.7 ms | 27.20 ms | 7.06 ms |  0.68 |
-| AddOptimalFix2 | 0.5  |   718.5 ms | 16.18 ms | 4.20 ms |  0.67 |
 
 ```
 BenchmarkDotNet v0.14.0, Windows 10 (10.0.20348.2849)
@@ -50,6 +31,22 @@ RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=2
 | AddOptimalFix1 | 0.5  |   567.7 ms | 13.66 ms | 3.55 ms |  0.40 |
 | AddOptimalFix2 | 0.5  |   570.7 ms |  9.24 ms | 2.40 ms |  0.40 |
 
+```
+BenchmarkDotNet v0.14.0, Windows 11 (10.0.26100.2894)
+AMD Ryzen 5 5500U with Radeon Graphics, 1 CPU, 12 logical and 6 physical cores
+.NET SDK 9.0.102
+  [Host]     : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX2
+  Job-YUKPSM : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX2
+
+InvocationCount=1  IterationCount=5  LaunchCount=1  
+RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=2  
+```
+
+| Method         | Load | Mean       | Error    | StdDev  | Ratio |
+|--------------- |----- |-----------:|---------:|--------:|------:|
+| AddOptimal     | 0.5  | 1,071.2 ms |  6.36 ms | 1.65 ms |  1.00 |
+| AddOptimalFix1 | 0.5  |   728.7 ms | 27.20 ms | 7.06 ms |  0.68 |
+| AddOptimalFix2 | 0.5  |   718.5 ms | 16.18 ms | 4.20 ms |  0.67 |
 
 ```
 BenchmarkDotNet v0.14.0, Ubuntu 24.04.1 LTS (Noble Numbat)
