@@ -26,7 +26,7 @@ https://github.com/check4game/DotNetBug2/blob/d5062aadf60fbefe4351b4ae48acad3e5d
 AddOptimalFix2 570ms
 https://github.com/check4game/DotNetBug2/blob/d5062aadf60fbefe4351b4ae48acad3e5de88448/DotNetBug2.cs#L278-L291
 
-# on modern processor 12th Gen Intel Core i5-12500H
+# on modern processor 11th Gen Intel Core i5-11500
 
 ```
 BenchmarkDotNet v0.14.0, Windows 10 (10.0.19045.4894/22H2/2022Update)
@@ -43,6 +43,8 @@ RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=2
 | AddOptimal     | 0.5  | 329.3 ms | 17.24 ms | 4.48 ms |  1.00 |    0.02 |
 | AddOptimalFix1 | 0.5  | 339.3 ms |  9.76 ms | 2.53 ms |  1.03 |    0.01 |
 | AddOptimalFix2 | 0.5  | 338.0 ms |  8.46 ms | 2.20 ms |  1.03 |    0.01 |
+
+# on modern processor 12th Gen Intel Core i5-12500H
 
 ```
 BenchmarkDotNet v0.14.0, Windows 11 (10.0.22631.4602/23H2/2023Update/SunValley3)
