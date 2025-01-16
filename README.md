@@ -29,6 +29,22 @@ https://github.com/check4game/DotNetBug2/blob/d5062aadf60fbefe4351b4ae48acad3e5d
 # on modern processor 12th Gen Intel Core i5-12500H
 
 ```
+BenchmarkDotNet v0.14.0, Windows 10 (10.0.19045.4894/22H2/2022Update)
+11th Gen Intel Core i5-11500 2.70GHz, 1 CPU, 12 logical and 6 physical cores
+.NET SDK 9.0.102
+  [Host]     : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+  Job-JBLZGT : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+
+InvocationCount=1  IterationCount=5  LaunchCount=1  
+RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=2  
+```
+| Method         | Load | Mean     | Error    | StdDev  | Ratio | RatioSD |
+|--------------- |----- |---------:|---------:|--------:|------:|--------:|
+| AddOptimal     | 0.5  | 329.3 ms | 17.24 ms | 4.48 ms |  1.00 |    0.02 |
+| AddOptimalFix1 | 0.5  | 339.3 ms |  9.76 ms | 2.53 ms |  1.03 |    0.01 |
+| AddOptimalFix2 | 0.5  | 338.0 ms |  8.46 ms | 2.20 ms |  1.03 |    0.01 |
+
+```
 BenchmarkDotNet v0.14.0, Windows 11 (10.0.22631.4602/23H2/2023Update/SunValley3)
 12th Gen Intel Core i5-12500H, 1 CPU, 16 logical and 12 physical cores
 .NET SDK 9.0.100-rc.2.24474.11
