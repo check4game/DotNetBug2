@@ -1,7 +1,6 @@
 # Performance slows down on "OLD" processors
 
 ```
-
 BenchmarkDotNet v0.14.0, Windows 10 (10.0.20348.2849)
 Intel Core i7-10700K CPU 3.80GHz, 1 CPU, 16 logical and 8 physical cores
 .NET SDK 9.0.102
@@ -10,7 +9,6 @@ Intel Core i7-10700K CPU 3.80GHz, 1 CPU, 16 logical and 8 physical cores
 
 InvocationCount=1  IterationCount=5  LaunchCount=1  
 RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=2  
-
 ```
 | Method         | Load | Mean       | Error    | StdDev   | Ratio | 
 |--------------- |----- |-----------:|---------:|---------:|------:|
