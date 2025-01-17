@@ -58,16 +58,42 @@ BenchmarkDotNet v0.14.0, Windows 10 (10.0.19045.4894/22H2/2022Update)
 11th Gen Intel Core i5-11500 2.70GHz, 1 CPU, 12 logical and 6 physical cores
 .NET SDK 9.0.102
   [Host]     : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
-  Job-JBLZGT : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+  Job-QHEQIL : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
 
 InvocationCount=1  IterationCount=5  LaunchCount=1  
 RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=2  
 ```
-| Method         | Load | Mean     | Error    | StdDev  | Ratio | RatioSD |
-|--------------- |----- |---------:|---------:|--------:|------:|--------:|
-| AddOptimal     | 0.5  | 329.3 ms | 17.24 ms | 4.48 ms |  1.00 |    0.02 |
-| AddOptimalFix1 | 0.5  | 339.3 ms |  9.76 ms | 2.53 ms |  1.03 |    0.01 |
-| AddOptimalFix2 | 0.5  | 338.0 ms |  8.46 ms | 2.20 ms |  1.03 |    0.01 |
+| Method         | Load | Mean       | Error     | StdDev   | Ratio | RatioSD |
+|--------------- |----- |-----------:|----------:|---------:|------:|--------:|
+| AddOptimalFix1 | 0.51 |   347.3 ms |  15.13 ms |  3.93 ms |  0.98 |    0.05 |
+| AddOptimal     | 0.51 |   356.2 ms |  69.92 ms | 18.16 ms |  1.00 |    0.07 |
+| AddOptimalFix2 | 0.51 |   356.5 ms |  53.73 ms | 13.95 ms |  1.00 |    0.06 |
+| AddOptimalFix3 | 0.51 |   372.5 ms |   2.14 ms |  0.56 ms |  1.05 |    0.05 |
+| AddOptimalCPU  | 0.51 |   869.3 ms | 139.07 ms | 36.12 ms |  2.45 |    0.15 |
+|                |      |            |           |          |       |         |
+| AddOptimal     | 0.61 |   424.3 ms |  89.80 ms | 23.32 ms |  1.00 |    0.07 |
+| AddOptimalFix2 | 0.61 |   470.9 ms | 108.94 ms | 28.29 ms |  1.11 |    0.08 |
+| AddOptimalFix1 | 0.61 |   491.4 ms |  46.48 ms | 12.07 ms |  1.16 |    0.06 |
+| AddOptimalFix3 | 0.61 |   531.7 ms | 198.61 ms | 51.58 ms |  1.26 |    0.13 |
+| AddOptimalCPU  | 0.61 | 1,089.7 ms | 165.77 ms | 43.05 ms |  2.57 |    0.16 |
+|                |      |            |           |          |       |         |
+| AddOptimal     | 0.71 |   479.7 ms |  71.12 ms | 18.47 ms |  1.00 |    0.05 |
+| AddOptimalFix1 | 0.71 |   565.3 ms |  56.08 ms | 14.56 ms |  1.18 |    0.05 |
+| AddOptimalFix2 | 0.71 |   566.0 ms | 211.72 ms | 54.98 ms |  1.18 |    0.11 |
+| AddOptimalFix3 | 0.71 |   635.8 ms |  19.19 ms |  4.98 ms |  1.33 |    0.05 |
+| AddOptimalCPU  | 0.71 | 1,285.0 ms |  24.36 ms |  6.33 ms |  2.68 |    0.09 |
+|                |      |            |           |          |       |         |
+| AddOptimal     | 0.81 |   571.1 ms |  66.42 ms | 17.25 ms |  1.00 |    0.04 |
+| AddOptimalFix2 | 0.81 |   595.2 ms |  12.31 ms |  3.20 ms |  1.04 |    0.03 |
+| AddOptimalFix1 | 0.81 |   604.0 ms |  25.76 ms |  6.69 ms |  1.06 |    0.03 |
+| AddOptimalFix3 | 0.81 |   794.0 ms |  24.04 ms |  6.24 ms |  1.39 |    0.04 |
+| AddOptimalCPU  | 0.81 | 1,503.3 ms |  11.11 ms |  2.89 ms |  2.63 |    0.07 |
+|                |      |            |           |          |       |         |
+| AddOptimal     | 0.91 |   668.5 ms |  22.80 ms |  5.92 ms |  1.00 |    0.01 |
+| AddOptimalFix2 | 0.91 |   714.4 ms |  30.02 ms |  7.80 ms |  1.07 |    0.01 |
+| AddOptimalFix1 | 0.91 |   715.3 ms |  13.30 ms |  3.46 ms |  1.07 |    0.01 |
+| AddOptimalFix3 | 0.91 |   994.5 ms |  23.54 ms |  6.11 ms |  1.49 |    0.01 |
+| AddOptimalCPU  | 0.91 | 1,771.8 ms | 139.63 ms | 36.26 ms |  2.65 |    0.05 |
 
 # on modern processor 12th Gen Intel Core i5-12500H
 
