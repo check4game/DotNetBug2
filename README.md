@@ -21,13 +21,16 @@ RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=5
 | AddOptimal     | 0.5  | 1,383.8 ms | 9.15 ms | 6.05 ms |  1.00 |
 
 AddOptimal, it's problem! On modern CPUs AddOptimal is faster than  AddOptimalFixN or  AddOptimalCPU
-https://github.com/check4game/DotNetBug2/blob/d5062aadf60fbefe4351b4ae48acad3e5de88448/DotNetBug2.cs#L159-L172
+https://github.com/check4game/DotNetBug2/blob/934a970555b80904c845e33bbf2f82ec372a469b/DotNetBug2.cs#L203-L216
 
 AddOptimalFix1
-https://github.com/check4game/DotNetBug2/blob/d5062aadf60fbefe4351b4ae48acad3e5de88448/DotNetBug2.cs#L217-L233
+https://github.com/check4game/DotNetBug2/blob/934a970555b80904c845e33bbf2f82ec372a469b/DotNetBug2.cs#L261-L277
 
 AddOptimalFix2
-https://github.com/check4game/DotNetBug2/blob/d5062aadf60fbefe4351b4ae48acad3e5de88448/DotNetBug2.cs#L278-L291
+https://github.com/check4game/DotNetBug2/blob/934a970555b80904c845e33bbf2f82ec372a469b/DotNetBug2.cs#L322-L335
+
+AddOptimalFix3
+https://github.com/check4game/DotNetBug2/blob/934a970555b80904c845e33bbf2f82ec372a469b/DotNetBug2.cs#L383-L391
 
 # on modern processor 11th Gen Intel Core i5-11500
 
