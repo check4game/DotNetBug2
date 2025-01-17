@@ -20,7 +20,7 @@ RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=5
 | AddOptimalCPU  | 0.5  |   917.3 ms | 7.06 ms | 4.67 ms |  0.66 |
 | AddOptimal     | 0.5  | 1,383.8 ms | 9.15 ms | 6.05 ms |  1.00 |
 
-AddOptimal, it's problem! On modern CPUs AddOptimal is faster than  AddOptimalFix1 or  AddOptimalFix2
+AddOptimal, it's problem! On modern CPUs AddOptimal is faster than  AddOptimalFixN or  AddOptimalCPU
 https://github.com/check4game/DotNetBug2/blob/d5062aadf60fbefe4351b4ae48acad3e5de88448/DotNetBug2.cs#L159-L172
 
 AddOptimalFix1
