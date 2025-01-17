@@ -5,42 +5,42 @@ BenchmarkDotNet v0.14.0, Windows 10 (10.0.20348.2849)
 Intel Core i7-10700K CPU 3.80GHz, 1 CPU, 16 logical and 8 physical cores
 .NET SDK 9.0.102
   [Host]     : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX2
-  Job-EWVRUH : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX2
+  Job-OVPQJT : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX2
 
 InvocationCount=1  IterationCount=5  LaunchCount=1  
 RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=2  
 ```
-| Method         | Load | Mean       | Error    | StdDev   | Ratio | 
-|--------------- |----- |-----------:|---------:|---------:|------:|
-| AddOptimalFix3 | 0.51 |   499.1 ms |  5.31 ms |  1.38 ms |  0.35 | 
-| AddOptimalFix2 | 0.51 |   596.0 ms |  2.08 ms |  0.54 ms |  0.42 | 
-| AddOptimalFix1 | 0.51 |   597.6 ms |  8.77 ms |  2.28 ms |  0.42 | 
-| AddOptimalCPU  | 0.51 |   912.4 ms |  1.35 ms |  0.35 ms |  0.64 | 
-| AddOptimal     | 0.51 | 1,417.0 ms | 34.81 ms |  9.04 ms |  1.00 | 
-|                |      |            |          |          |       | 
-| AddOptimalFix3 | 0.61 |   614.5 ms |  5.46 ms |  1.42 ms |  0.36 | 
-| AddOptimalFix2 | 0.61 |   796.1 ms | 22.09 ms |  5.74 ms |  0.47 | 
-| AddOptimalFix1 | 0.61 |   800.3 ms | 13.38 ms |  3.47 ms |  0.47 | 
-| AddOptimalCPU  | 0.61 | 1,119.6 ms |  7.18 ms |  1.86 ms |  0.65 | 
-| AddOptimal     | 0.61 | 1,709.9 ms | 58.22 ms | 15.12 ms |  1.00 | 
-|                |      |            |          |          |       | 
-| AddOptimalFix3 | 0.71 |   782.6 ms | 10.45 ms |  2.71 ms |  0.39 | 
-| AddOptimalFix1 | 0.71 | 1,005.4 ms | 14.69 ms |  3.81 ms |  0.51 | 
-| AddOptimalFix2 | 0.71 | 1,007.4 ms | 31.12 ms |  8.08 ms |  0.51 | 
-| AddOptimalCPU  | 0.71 | 1,340.9 ms |  7.72 ms |  2.01 ms |  0.67 | 
-| AddOptimal     | 0.71 | 1,988.2 ms | 98.11 ms | 25.48 ms |  1.00 | 
-|                |      |            |          |          |       | 
-| AddOptimalFix3 | 0.81 |   960.1 ms |  5.47 ms |  1.42 ms |  0.43 | 
-| AddOptimalFix1 | 0.81 | 1,239.9 ms | 10.62 ms |  2.76 ms |  0.56 | 
-| AddOptimalFix2 | 0.81 | 1,242.3 ms | 14.56 ms |  3.78 ms |  0.56 | 
-| AddOptimalCPU  | 0.81 | 1,608.1 ms | 21.03 ms |  5.46 ms |  0.72 | 
-| AddOptimal     | 0.81 | 2,225.8 ms | 19.42 ms |  5.04 ms |  1.00 | 
-|                |      |            |          |          |       | 
-| AddOptimalFix3 | 0.91 | 1,174.6 ms |  5.39 ms |  1.40 ms |  0.47 | 
-| AddOptimalFix1 | 0.91 | 1,501.7 ms | 15.24 ms |  3.96 ms |  0.60 | 
-| AddOptimalFix2 | 0.91 | 1,503.0 ms | 16.17 ms |  4.20 ms |  0.60 | 
-| AddOptimalCPU  | 0.91 | 1,809.2 ms |  3.62 ms |  0.94 ms |  0.72 | 
-| AddOptimal     | 0.91 | 2,512.7 ms | 44.78 ms | 11.63 ms |  1.00 | 
+| Method         | Load | Mean       | Error     | StdDev   | Ratio | RatioSD |
+|--------------- |----- |-----------:|----------:|---------:|------:|--------:|
+| AddOptimalFix3 | 0.51 |   485.2 ms |  13.99 ms |  3.63 ms |  0.34 |    0.00 |
+| AddOptimalFix2 | 0.51 |   594.0 ms |  15.14 ms |  3.93 ms |  0.42 |    0.00 |
+| AddOptimalFix1 | 0.51 |   603.1 ms |  12.96 ms |  3.37 ms |  0.43 |    0.00 |
+| AddOptimalCPU  | 0.51 |   909.5 ms |   4.67 ms |  1.21 ms |  0.65 |    0.00 |
+| AddOptimal     | 0.51 | 1,407.8 ms |  19.56 ms |  5.08 ms |  1.00 |    0.00 |
+|                |      |            |           |          |       |         |
+| AddOptimalFix3 | 0.61 |   614.0 ms |   2.90 ms |  0.75 ms |  0.37 |    0.00 |
+| AddOptimalFix2 | 0.61 |   776.7 ms |   6.40 ms |  1.66 ms |  0.46 |    0.00 |
+| AddOptimalFix1 | 0.61 |   791.5 ms |   6.98 ms |  1.81 ms |  0.47 |    0.00 |
+| AddOptimalCPU  | 0.61 | 1,141.0 ms |   5.80 ms |  1.51 ms |  0.68 |    0.00 |
+| AddOptimal     | 0.61 | 1,680.9 ms |  15.94 ms |  4.14 ms |  1.00 |    0.00 |
+|                |      |            |           |          |       |         |
+| AddOptimalFix3 | 0.71 |   778.8 ms |   9.58 ms |  2.49 ms |  0.40 |    0.00 |
+| AddOptimalFix2 | 0.71 |   994.9 ms |   7.30 ms |  1.90 ms |  0.51 |    0.00 |
+| AddOptimalFix1 | 0.71 |   996.5 ms |   7.04 ms |  1.83 ms |  0.51 |    0.00 |
+| AddOptimalCPU  | 0.71 | 1,323.5 ms |   8.39 ms |  2.18 ms |  0.67 |    0.00 |
+| AddOptimal     | 0.71 | 1,964.0 ms |  12.15 ms |  3.16 ms |  1.00 |    0.00 |
+|                |      |            |           |          |       |         |
+| AddOptimalFix3 | 0.81 |   961.1 ms |   7.62 ms |  1.98 ms |  0.43 |    0.00 |
+| AddOptimalFix1 | 0.81 | 1,240.0 ms |  10.01 ms |  2.60 ms |  0.55 |    0.00 |
+| AddOptimalFix2 | 0.81 | 1,251.1 ms |  53.74 ms | 13.96 ms |  0.56 |    0.01 |
+| AddOptimalCPU  | 0.81 | 1,561.7 ms |  24.17 ms |  6.28 ms |  0.70 |    0.00 |
+| AddOptimal     | 0.81 | 2,239.8 ms |   7.46 ms |  1.94 ms |  1.00 |    0.00 |
+|                |      |            |           |          |       |         |
+| AddOptimalFix3 | 0.91 | 1,183.8 ms |  20.14 ms |  5.23 ms |  0.45 |    0.01 |
+| AddOptimalFix2 | 0.91 | 1,514.4 ms |  22.67 ms |  5.89 ms |  0.58 |    0.01 |
+| AddOptimalFix1 | 0.91 | 1,557.6 ms |  93.55 ms | 24.29 ms |  0.60 |    0.01 |
+| AddOptimalCPU  | 0.91 | 1,819.0 ms |  17.08 ms |  4.44 ms |  0.70 |    0.01 |
+| AddOptimal     | 0.91 | 2,603.1 ms | 122.42 ms | 31.79 ms |  1.00 |    0.02 |
 
 AddOptimal, it's problem! On modern CPUs AddOptimal is faster than  AddOptimalFix1 or  AddOptimalFix2
 https://github.com/check4game/DotNetBug2/blob/d5062aadf60fbefe4351b4ae48acad3e5de88448/DotNetBug2.cs#L159-L172
