@@ -116,45 +116,44 @@ RunStrategy=Monitoring UnrollFactor=1 WarmupCount=2
 
 # some old processors
 
-
 ```
 BenchmarkDotNet v0.14.0, Windows 11 (10.0.26100.2894)
 AMD Ryzen 5 5500U with Radeon Graphics, 1 CPU, 12 logical and 6 physical cores
 .NET SDK 9.0.102
   [Host]     : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX2
-  Job-LSQBKG : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX2
+  Job-HNKRYA : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX2
 
 InvocationCount=1  IterationCount=5  LaunchCount=1  
 RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=2  
 ```
-| Method         | Load | Mean       | Error     | StdDev    | Ratio | 
-|--------------- |----- |-----------:|----------:|----------:|------:|
-| AddOptimalFix3 | 0.51 |   750.2 ms |  12.93 ms |   3.36 ms |  0.65 | 
-| AddOptimalFix1 | 0.51 |   762.2 ms |   0.71 ms |   0.19 ms |  0.66 | 
-| AddOptimalFix2 | 0.51 |   762.5 ms |   2.82 ms |   0.73 ms |  0.66 | 
-| AddOptimal     | 0.51 | 1,146.9 ms |   1.92 ms |   0.50 ms |  1.00 | 
-| AddOptimalCPU  | 0.51 | 1,276.4 ms |   6.03 ms |   1.57 ms |  1.11 | 
-|                |      |            |           |           |       | 
-| AddOptimalFix3 | 0.61 |   952.7 ms |   7.63 ms |   1.98 ms |  0.70 | 
-| AddOptimalFix1 | 0.61 |   964.0 ms |   3.04 ms |   0.79 ms |  0.70 | 
-| AddOptimalFix2 | 0.61 |   973.2 ms |  14.45 ms |   3.75 ms |  0.71 | 
-| AddOptimal     | 0.61 | 1,370.6 ms |  11.11 ms |   2.89 ms |  1.00 | 
-| AddOptimalCPU  | 0.61 | 1,558.1 ms |   7.20 ms |   1.87 ms |  1.14 | 
-|                |      |            |           |           |       | 
-| AddOptimalFix1 | 0.71 | 1,183.6 ms |   2.75 ms |   0.72 ms |  0.74 | 
-| AddOptimalFix2 | 0.71 | 1,194.8 ms |  33.64 ms |   8.74 ms |  0.75 | 
-| AddOptimalFix3 | 0.71 | 1,223.6 ms |  12.61 ms |   3.28 ms |  0.76 | 
-| AddOptimal     | 0.71 | 1,600.9 ms |   2.67 ms |   0.69 ms |  1.00 | 
-| AddOptimalCPU  | 0.71 | 1,956.7 ms | 482.99 ms | 125.43 ms |  1.22 | 
-|                |      |            |           |           |       | 
-| AddOptimalFix1 | 0.81 | 1,415.4 ms |   3.13 ms |   0.81 ms |  0.77 | 
-| AddOptimalFix2 | 0.81 | 1,418.5 ms |   6.58 ms |   1.71 ms |  0.77 | 
-| AddOptimalFix3 | 0.81 | 1,500.9 ms |  14.63 ms |   3.80 ms |  0.81 | 
-| AddOptimal     | 0.81 | 1,844.2 ms |  51.33 ms |  13.33 ms |  1.00 | 
-| AddOptimalCPU  | 0.81 | 2,224.7 ms |  53.81 ms |  13.97 ms |  1.21 | 
-|                |      |            |           |           |       | 
-| AddOptimalFix1 | 0.91 | 1,698.6 ms |  14.30 ms |   3.71 ms |  0.81 | 
-| AddOptimalFix2 | 0.91 | 1,703.3 ms |  10.67 ms |   2.77 ms |  0.81 | 
-| AddOptimalFix3 | 0.91 | 1,910.9 ms |  12.78 ms |   3.32 ms |  0.91 | 
-| AddOptimal     | 0.91 | 2,102.8 ms |   7.95 ms |   2.07 ms |  1.00 | 
-| AddOptimalCPU  | 0.91 | 2,600.5 ms |  11.69 ms |   3.04 ms |  1.24 | 
+| Method         | Load | Mean       | Error    | StdDev   | Ratio |
+|--------------- |----- |-----------:|---------:|---------:|------:|
+| AddOptimalFix3 | 0.51 |   740.0 ms |  8.78 ms |  2.28 ms |  0.65 |
+| AddOptimalFix2 | 0.51 |   758.9 ms |  1.46 ms |  0.38 ms |  0.66 |
+| AddOptimalFix1 | 0.51 |   759.5 ms |  2.21 ms |  0.57 ms |  0.66 |
+| AddOptimal     | 0.51 | 1,146.3 ms | 42.37 ms | 11.00 ms |  1.00 |
+| AddOptimalCPU  | 0.51 | 1,270.4 ms |  9.25 ms |  2.40 ms |  1.11 |
+|                |      |            |          |          |       |
+| AddOptimalFix3 | 0.61 |   959.1 ms |  1.93 ms |  0.50 ms |  0.70 |
+| AddOptimalFix2 | 0.61 |   959.5 ms |  3.99 ms |  1.04 ms |  0.70 |
+| AddOptimalFix1 | 0.61 |   960.2 ms |  6.05 ms |  1.57 ms |  0.70 |
+| AddOptimal     | 0.61 | 1,366.9 ms | 12.22 ms |  3.17 ms |  1.00 |
+| AddOptimalCPU  | 0.61 | 1,550.4 ms |  5.23 ms |  1.36 ms |  1.13 |
+|                |      |            |          |          |       |
+| AddOptimalFix2 | 0.71 | 1,177.1 ms |  2.67 ms |  0.69 ms |  0.74 |
+| AddOptimalFix1 | 0.71 | 1,179.2 ms |  6.44 ms |  1.67 ms |  0.74 |
+| AddOptimalFix3 | 0.71 | 1,186.9 ms |  9.90 ms |  2.57 ms |  0.75 |
+| AddOptimal     | 0.71 | 1,590.0 ms | 16.49 ms |  4.28 ms |  1.00 |
+| AddOptimalCPU  | 0.71 | 1,858.8 ms |  5.51 ms |  1.43 ms |  1.17 |
+|                |      |            |          |          |       |
+| AddOptimalFix1 | 0.81 | 1,411.4 ms |  5.51 ms |  1.43 ms |  0.77 |
+| AddOptimalFix2 | 0.81 | 1,411.6 ms |  5.02 ms |  1.30 ms |  0.77 |
+| AddOptimalFix3 | 0.81 | 1,494.1 ms |  6.75 ms |  1.75 ms |  0.82 |
+| AddOptimal     | 0.81 | 1,824.0 ms |  8.75 ms |  2.27 ms |  1.00 |
+| AddOptimalCPU  | 0.81 | 2,206.5 ms |  7.93 ms |  2.06 ms |  1.21 |
+|                |      |            |          |          |       |
+| AddOptimalFix1 | 0.91 | 1,681.2 ms |  9.33 ms |  2.42 ms |  0.80 |
+| AddOptimalFix2 | 0.91 | 1,694.6 ms | 22.45 ms |  5.83 ms |  0.81 |
+| AddOptimalFix3 | 0.91 | 1,873.7 ms | 46.70 ms | 12.13 ms |  0.89 |
+| AddOptimal     | 0.91 | 2,093.6 ms |  5.58 ms |  1.45 ms |  1.00 |
+| AddOptimalCPU  | 0.91 | 2,604.0 ms | 84.17 ms | 21.86 ms |  1.24 |
