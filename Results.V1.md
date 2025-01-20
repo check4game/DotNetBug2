@@ -39,3 +39,23 @@ RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=5
 | AddVectorCPUFor     | 0.5  | 362.4 ms | 1.90 ms | 1.26 ms |  1.05 |
 | AddVectorWhile      | 0.5  | 376.5 ms | 2.46 ms | 1.63 ms |  1.09 |
 | AddCPU              | 0.5  | 780.7 ms | 3.07 ms | 2.03 ms |  2.26 |
+```
+
+BenchmarkDotNet v0.14.0, Windows 11 (10.0.26100.2894)
+AMD Ryzen 5 5500U with Radeon Graphics, 1 CPU, 12 logical and 6 physical cores
+.NET SDK 9.0.102
+  [Host]     : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX2
+  Job-HEBRPA : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX2
+
+InvocationCount=1  IterationCount=10  LaunchCount=1  
+RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=5  
+
+```
+| Method              | Load | Mean       | Error   | StdDev  | Ratio |
+|-------------------- |----- |-----------:|--------:|--------:|------:|
+| AddVectorIF         | 0.5  |   739.2 ms | 2.36 ms | 1.56 ms |  1.00 |
+| AddVectorWhile      | 0.5  |   740.7 ms | 5.28 ms | 3.49 ms |  1.00 |
+| AddVectorCPUIndexOf | 0.5  |   742.1 ms | 5.89 ms | 3.89 ms |  1.00 |
+| AddVectorCPUFor     | 0.5  |   743.1 ms | 1.08 ms | 0.72 ms |  1.00 |
+| AddVector           | 0.5  | 1,119.0 ms | 1.78 ms | 1.18 ms |  1.51 |
+| AddCPU              | 0.5  | 1,217.7 ms | 1.47 ms | 0.97 ms |  1.64 |
