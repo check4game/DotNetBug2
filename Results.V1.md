@@ -59,3 +59,23 @@ RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=5
 | AddVectorCPUFor     | 0.5  |   743.1 ms | 1.08 ms | 0.72 ms |  1.00 |
 | AddVector           | 0.5  | 1,119.0 ms | 1.78 ms | 1.18 ms |  1.51 |
 | AddCPU              | 0.5  | 1,217.7 ms | 1.47 ms | 0.97 ms |  1.64 |
+```
+
+BenchmarkDotNet v0.14.0, Windows 11 (10.0.26100.2605)
+AMD Ryzen 7 9700X, 1 CPU, 16 logical and 8 physical cores
+.NET SDK 9.0.101
+  [Host]     : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+  Job-SLFBIJ : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+
+InvocationCount=1  IterationCount=10  LaunchCount=1  
+RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=5  
+
+```
+| Method              | Load | Mean     | Error    | StdDev   | Ratio | RatioSD |
+|-------------------- |----- |---------:|---------:|---------:|------:|--------:|
+| AddVectorIF         | 0.5  | 249.3 ms |  1.77 ms |  1.17 ms |  0.92 |    0.03 |
+| AddVectorWhile      | 0.5  | 262.4 ms |  3.65 ms |  2.42 ms |  0.97 |    0.04 |
+| AddVector           | 0.5  | 264.8 ms |  5.14 ms |  3.40 ms |  0.98 |    0.04 |
+| AddVectorCPUIndexOf | 0.5  | 271.5 ms | 16.03 ms | 10.60 ms |  1.00 |    0.05 |
+| AddVectorCPUFor     | 0.5  | 283.0 ms |  3.11 ms |  2.06 ms |  1.04 |    0.04 |
+| AddCPU              | 0.5  | 648.0 ms | 21.11 ms | 13.96 ms |  2.39 |    0.10 |
