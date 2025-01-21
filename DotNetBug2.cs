@@ -1,12 +1,14 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 using BenchmarkDotNet.Running;
-using System.Numerics;
+
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Numerics;
+
 using System.Runtime.Intrinsics;
 
-var summary = BenchmarkRunner.Run(typeof(Program).Assembly);
+BenchmarkRunner.Run(typeof(Program).Assembly);
 
 [SimpleJob(RunStrategy.Monitoring, launchCount: 1, iterationCount: 10, warmupCount: 5, invocationCount: 1)]
 [Orderer(BenchmarkDotNet.Order.SummaryOrderPolicy.FastestToSlowest)]
@@ -41,70 +43,216 @@ public class HashTableBenchmark
     }
 
     [Benchmark(Baseline = true)]
-    public int AddVectorCPUIndexOf()
+    public int AddFindNoSimd()
     {
         foreach (var key in data.AsSpan().Slice(0, (int)(ht.Capacity * Load)))
         {
-            ht.AddVectorCPUIndexOf(key);
+            ht.AddFindNoSimd(key);
         }
 
         return ht.Count;
     }
 
     [Benchmark]
-    public int AddVector()
+    public int AddFindSimd()
     {
         foreach (var key in data.AsSpan().Slice(0, (int)(ht.Capacity * Load)))
         {
-            ht.AddVector(key);
+            ht.AddFindSimd(key);
         }
 
         return ht.Count;
     }
 
     [Benchmark]
-    public int AddVectorIF()
+    public int AddNoSimd()
     {
         foreach (var key in data.AsSpan().Slice(0, (int)(ht.Capacity * Load)))
         {
-            ht.AddVectorIF(key);
+            ht.AddNoSimd(key);
         }
 
         return ht.Count;
     }
+}
 
-    [Benchmark]
-    public int AddVectorWhile()
+internal class ControlBytes : IDisposable
+{
+    private nint array = nint.Zero;
+
+    public readonly uint Length;
+
+    private const byte emptyValue = byte.MinValue;
+
+    public ControlBytes(uint length)
     {
-        foreach (var key in data.AsSpan().Slice(0, (int)(ht.Capacity * Load)))
+        unsafe
         {
-            ht.AddVectorWhile(key);
+            array = (nint)NativeMemory.AlignedAlloc(Length = (length + (uint)OffsetSpan.Length), (nuint)OffsetSpan.Length);
         }
 
-        return ht.Count;
+        Clear(); emptyVector = CreateVector(emptyValue);
     }
 
-    [Benchmark]
-    public int AddVectorCPUFor()
+    public void Clear()
     {
-        foreach (var key in data.AsSpan().Slice(0, (int)(ht.Capacity * Load)))
+        unsafe
         {
-            ht.AddVectorCPUFor(key);
+            NativeMemory.Fill(array.ToPointer(), Length, emptyValue);
         }
-
-        return ht.Count;
     }
 
-    [Benchmark]
-    public int AddCPU()
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool IsEmpty(ulong index)
     {
-        foreach (var key in data.AsSpan().Slice(0, (int)(ht.Capacity * Load)))
-        {
-            ht.AddCPU(key);
-        }
-
-        return ht.Count;
+        return GetValue(index) == emptyValue;
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public byte FindEmptySimd(ref Vector128<byte> source)
+    {
+        var emptyMask = Vector128.Equals(source, emptyVector).ExtractMostSignificantBits();
+
+        if (emptyMask != 0) return (byte)BitOperations.TrailingZeroCount(emptyMask);
+
+        return byte.MaxValue;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public byte FindEmptySimdIF(ref Vector128<byte> source)
+    {
+        var emptyMask = Vector128.Equals(source, emptyVector).ExtractMostSignificantBits();
+
+        if (emptyMask != 0) return FindEmptyNoSimd(ref source);
+
+        return byte.MaxValue;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public byte FindEmptyNoSimd(ref Vector128<byte> source)
+    {
+        unsafe
+        {
+            return FindEmptyNoSimd((byte*)Unsafe.AsPointer(ref source));
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public byte FindEmptyNoSimd(ulong index)
+    {
+        unsafe
+        {
+            return FindEmptyNoSimd((byte*)array.ToPointer() + index);
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private unsafe byte FindEmptyNoSimd(byte* ptr)
+    {
+        if (*ptr == emptyValue) return 0;
+
+        var ul = *(ulong*)(ptr);
+
+        //if (((ul >> 56) & 0xFF) == emptyValue) return 0;
+        if (((ul >> 48) & 0xFF) == emptyValue) return 1;
+        if (((ul >> 40) & 0xFF) == emptyValue) return 2;
+        if (((ul >> 32) & 0xFF) == emptyValue) return 3;
+        if (((ul >> 24) & 0xFF) == emptyValue) return 4;
+        if (((ul >> 16) & 0xFF) == emptyValue) return 5;
+        if (((ul >> 8) & 0xFF) == emptyValue) return 6;
+        if (((ul) & 0xFF) == emptyValue) return 7;
+
+        ul = *(ulong*)(ptr + 8);
+
+        if (((ul >> 56) & 0xFF) == emptyValue) return 8;
+        if (((ul >> 48) & 0xFF) == emptyValue) return 9;
+        if (((ul >> 40) & 0xFF) == emptyValue) return 10;
+        if (((ul >> 32) & 0xFF) == emptyValue) return 11;
+        if (((ul >> 24) & 0xFF) == emptyValue) return 12;
+        if (((ul >> 16) & 0xFF) == emptyValue) return 13;
+        if (((ul >> 8) & 0xFF) == emptyValue) return 14;
+        if (((ul) & 0xFF) == emptyValue) return 15;
+
+        return byte.MaxValue;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static byte ToHashCode(ulong index) => (byte)((index >> 56) | 0x01);
+
+    public const byte vectorSize = 16;
+
+    private readonly Vector128<byte> emptyVector;
+    public static ReadOnlySpan<byte> OffsetSpan =>
+    [
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+    ];
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public uint Compare(ref Vector128<byte> source, ref Vector128<byte> target)
+    {
+        return Vector128.Equals(source, target).ExtractMostSignificantBits();
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public uint Compare(ulong index, ref Vector128<byte> target)
+    {
+        return Vector128.Equals(AsVector(index), target).ExtractMostSignificantBits();
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Vector128<byte> CreateVector(byte value) => Vector128.Create(value);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Vector128<byte> AsVector(ulong index)
+    {
+        return Vector128.LoadUnsafe(ref GetReference(index));
+        /*
+        unsafe
+        {
+            return Vector128.LoadAligned((byte*)array.ToPointer() + index);
+        }
+        */
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ref byte GetReference(ulong index)
+    {
+        unsafe
+        {
+            return ref *((byte*)array.ToPointer() + index);
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public byte GetValue(ulong index)
+    {
+        unsafe
+        {
+            return *((byte*)array.ToPointer() + index);
+        }
+    }
+
+    public bool IsDisposed => array == IntPtr.Zero;
+
+    private void Dispose(bool disposing)
+    {
+        if (!IsDisposed)
+        {
+            unsafe
+            {
+                NativeMemory.AlignedFree(array.ToPointer());
+            }
+
+            array = IntPtr.Zero;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true); GC.SuppressFinalize(this);
+    }
+
+    ~ControlBytes() => Dispose(false);
 }
 
 class HashTable
@@ -115,26 +263,23 @@ class HashTable
 
         _lengthMinusOne = (_Capacity - 1);
 
-        _controlBytes = GC.AllocateArray<byte>((int)_Capacity + _vectorSize);
+        _controlBytes = new ControlBytes(_Capacity);
 
-        _entries = GC.AllocateUninitializedArray<uint>((int)_Capacity + _vectorSize);
+        _entries = GC.AllocateUninitializedArray<uint>((int)_controlBytes.Length);
+
+        //_lengthMinusOne &= ~15u;
     }
 
     public uint Capacity => _Capacity;
 
     private uint _Capacity, _lengthMinusOne;
-
-    private const byte _vectorSize = 16;
-
-    private const byte _emptyBucket = byte.MinValue;
-
-    private Vector128<byte> _emptyBucketVector = Vector128.Create(_emptyBucket);
+    
     public void Clear()
     {
-        Count = 0; _controlBytes.AsSpan().Clear();
+        Count = 0; _controlBytes.Clear();
     }
 
-    private byte[] _controlBytes;
+    private ControlBytes _controlBytes;
 
     private uint[] _entries;
     
@@ -151,36 +296,17 @@ class HashTable
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static ref byte GetReference(byte[] array, ulong index)
+    private static ulong ToIndex(uint key) => (uint)key.GetHashCode() * 11400714819323198485UL;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void AddFindSimd(uint key)
     {
-        ref var arr0 = ref MemoryMarshal.GetArrayDataReference(array);
-        return ref Unsafe.AddByteOffset(ref arr0, (nuint)index);
-    }
+        var index = ToIndex(key);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static byte GetValue(byte[] array, ulong index)
-    {
-        ref var arr0 = ref MemoryMarshal.GetArrayDataReference(array);
-        return Unsafe.AddByteOffset(ref arr0, (nuint)index);
-    }
+        var hashCode = ControlBytes.ToHashCode(index);
 
-    private const ulong _goldenRatio = 11400714819323198485UL;
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static ulong GetHashCode(uint key) => ((uint)key.GetHashCode() * _goldenRatio);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static byte H2(ulong hashcode) => (byte)((hashcode >> 56) | 0x01);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void AddVector(uint key)
-    {
-        var index = GetHashCode(key);
-
-        var h2 = H2(index);
-
-        // Create a SIMD vector with the value of 'h2' for quick equality checks.
-        var target = Vector128.Create(h2);
+        // Create a SIMD vector with the value of 'hashCode' for quick equality checks.
+        var target = _controlBytes.CreateVector(hashCode);
 
         // Initialize the probing jump distance to zero, which will increase with each probe iteration.
         byte jumpDistance = 0;
@@ -189,56 +315,52 @@ class HashTable
         {
             index &= _lengthMinusOne; // Use bitwise AND to ensure the index wraps around within the bounds of the map. Thus preventing out of bounds exceptions
 
-            var source = Vector128.LoadUnsafe(ref GetReference(_controlBytes, index));
+            var source = _controlBytes.AsVector(index);
 
             // Compare `source` and `target` vectors to find any positions with a matching control byte.
-            var resultMask = Vector128.Equals(source, target).ExtractMostSignificantBits();
+            var resultMask = _controlBytes.Compare(ref source, ref target);   
 
             // Loop over each set bit in `mask` (indicating matching positions).
             while (resultMask != 0)
             {
                 // Find the lowest set bit in `mask` (first matching position).
-                var bitPos = BitOperations.TrailingZeroCount(resultMask);
+                var offset = (uint)BitOperations.TrailingZeroCount(resultMask);
 
                 // If a matching key is found, update the entry's value and return the old value.
-                if (GetReference(_entries, index + (uint)bitPos) == key)
-                {
-                    return;
-                }
+                if (GetReference(_entries, index + offset) == key) return;
 
                 //// Clear the lowest set bit in `mask` to continue with the next matching bit.
                 resultMask = ResetLowestSetBit(resultMask);
             }
 
-            var emptyMask = Vector128.Equals(source, _emptyBucketVector).ExtractMostSignificantBits();
-
-            // Check for empty buckets in the current vector.
-            if (emptyMask != 0)
             {
-                index += (uint)BitOperations.TrailingZeroCount(emptyMask);
+                var offset = _controlBytes.FindEmptySimd(ref source);
 
-                GetReference(_controlBytes, index) = h2;
-                GetReference(_entries, index) = key;
+                if (offset != byte.MaxValue)
+                {
+                    index += offset;
 
-                Count++;
+                    _controlBytes.GetReference(index) = hashCode;
+                    GetReference(_entries, index) = key;
 
-                return;
+                    Count++; return;
+                }
             }
 
-            jumpDistance += _vectorSize; // Increase the jump distance by 16 to probe the next cluster.
+            jumpDistance += ControlBytes.vectorSize; // Increase the jump distance by 16 to probe the next cluster.
             index += jumpDistance; // Move the index forward by the jump distance.           
         }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void AddVectorIF(uint key)
+    public void AddFindNoSimd(uint key)
     {
-        var index = GetHashCode(key);
+        var index = ToIndex(key);
 
-        var h2 = H2(index);
+        var hashCode = ControlBytes.ToHashCode(index);
 
-        // Create a SIMD vector with the value of 'h2' for quick equality checks.
-        var target = Vector128.Create(h2);
+        // Create a SIMD vector with the value of 'hashCode' for quick equality checks.
+        var target = _controlBytes.CreateVector(hashCode);
 
         // Initialize the probing jump distance to zero, which will increase with each probe iteration.
         byte jumpDistance = 0;
@@ -247,59 +369,48 @@ class HashTable
         {
             index &= _lengthMinusOne; // Use bitwise AND to ensure the index wraps around within the bounds of the map. Thus preventing out of bounds exceptions
 
-            var source = Vector128.LoadUnsafe(ref GetReference(_controlBytes, index));
-
             // Compare `source` and `target` vectors to find any positions with a matching control byte.
-            var resultMask = Vector128.Equals(source, target).ExtractMostSignificantBits();
+            //var resultMask = _controlBytes.Compare(_controlBytes.AsVector(index), target);
+            var resultMask = _controlBytes.Compare(index, ref target);
 
             // Loop over each set bit in `mask` (indicating matching positions).
             while (resultMask != 0)
             {
                 // Find the lowest set bit in `mask` (first matching position).
-                var bitPos = BitOperations.TrailingZeroCount(resultMask);
+                var offset = (uint)BitOperations.TrailingZeroCount(resultMask);
 
                 // If a matching key is found, update the entry's value and return the old value.
-                if (GetReference(_entries, index + (uint)bitPos) == key)
-                {
-                    return;
-                }
+                if (GetReference(_entries, index + offset) == key) return;
 
                 //// Clear the lowest set bit in `mask` to continue with the next matching bit.
                 resultMask = ResetLowestSetBit(resultMask);
             }
 
-            var emptyMask = Vector128.Equals(source, _emptyBucketVector).ExtractMostSignificantBits();
-
-            // Check for empty buckets in the current vector.
-            if (emptyMask != 0)
             {
-                if (_emptyBucket != GetValue(_controlBytes, index))
+                var offset = _controlBytes.FindEmptyNoSimd(index);
+
+                if (offset != byte.MaxValue)
                 {
-                    index += (uint)BitOperations.TrailingZeroCount(emptyMask);
+                    index += offset;
+
+                    _controlBytes.GetReference(index) = hashCode;
+                    GetReference(_entries, index) = key;
+
+                    Count++; return;
                 }
-
-                GetReference(_controlBytes, index) = h2;
-                GetReference(_entries, index) = key;
-
-                Count++;
-
-                return;
             }
 
-            jumpDistance += _vectorSize; // Increase the jump distance by 16 to probe the next cluster.
+            jumpDistance += ControlBytes.vectorSize; // Increase the jump distance by 16 to probe the next cluster.
             index += jumpDistance; // Move the index forward by the jump distance.           
         }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void AddVectorWhile(uint key)
+    public void AddNoSimd(uint key)
     {
-        var index = GetHashCode(key);
+        var index = ToIndex(key);
 
-        var h2 = H2(index);
-
-        // Create a SIMD vector with the value of 'h2' for quick equality checks.
-        var target = Vector128.Create(h2);
+        var hashCode = ControlBytes.ToHashCode(index);
 
         // Initialize the probing jump distance to zero, which will increase with each probe iteration.
         byte jumpDistance = 0;
@@ -308,220 +419,29 @@ class HashTable
         {
             index &= _lengthMinusOne; // Use bitwise AND to ensure the index wraps around within the bounds of the map. Thus preventing out of bounds exceptions
 
-            var source = Vector128.LoadUnsafe(ref GetReference(_controlBytes, index));
+            ref var cb = ref _controlBytes.GetReference(index);
 
-            // Compare `source` and `target` vectors to find any positions with a matching control byte.
-            var resultMask = Vector128.Equals(source, target).ExtractMostSignificantBits();
-
-            // Loop over each set bit in `mask` (indicating matching positions).
-            while (resultMask != 0)
+            foreach (var offset in ControlBytes.OffsetSpan)
             {
-                // Find the lowest set bit in `mask` (first matching position).
-                var bitPos = BitOperations.TrailingZeroCount(resultMask);
-
-                // If a matching key is found, update the entry's value and return the old value.
-                if (GetReference(_entries, index + (uint)bitPos) == key)
-                {
-                    return;
-                }
-
-                //// Clear the lowest set bit in `mask` to continue with the next matching bit.
-                resultMask = ResetLowestSetBit(resultMask);
-            }
-
-            var emptyMask = Vector128.Equals(source, _emptyBucketVector).ExtractMostSignificantBits();
-
-            // Check for empty buckets in the current vector.
-            if (emptyMask != 0)
-            {
-                while (_emptyBucket != GetValue(_controlBytes, index)) index++;
-
-                GetReference(_controlBytes, index) = h2;
-                GetReference(_entries, index) = key;
-
-                Count++;
-
-                return;
-            }
-
-            jumpDistance += _vectorSize; // Increase the jump distance by 16 to probe the next cluster.
-            index += jumpDistance; // Move the index forward by the jump distance.           
-        }
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void AddVectorCPUFor(uint key)
-    {
-        var index = GetHashCode(key);
-
-        var h2 = H2(index);
-
-        // Create a SIMD vector with the value of 'h2' for quick equality checks.
-        var target = Vector128.Create(h2);
-
-        // Initialize the probing jump distance to zero, which will increase with each probe iteration.
-        byte jumpDistance = 0;
-
-        ref var controlBytes = ref MemoryMarshal.GetArrayDataReference(_controlBytes);
-
-        while (true)
-        {
-            index &= _lengthMinusOne; // Use bitwise AND to ensure the index wraps around within the bounds of the map. Thus preventing out of bounds exceptions
-
-            ref var cb = ref Unsafe.AddByteOffset(ref controlBytes, (nuint)index);
-
-            // Compare `source` and `target` vectors to find any positions with a matching control byte.
-            var resultMask = Vector128.Equals(Vector128.LoadUnsafe(in cb), target).ExtractMostSignificantBits();
-            //var resultMask = Vector128.Equals(Unsafe.ReadUnaligned<Vector128<sbyte>>(in Unsafe.As<sbyte,byte>(ref cb)), target).ExtractMostSignificantBits();
-
-            // Loop over each set bit in `mask` (indicating matching positions).
-            while (resultMask != 0)
-            {
-                // Find the lowest set bit in `mask` (first matching position).
-                var bitPos = BitOperations.TrailingZeroCount(resultMask);
-
-                // If a matching key is found, update the entry's value and return the old value.
-                if (GetReference(_entries, index + (uint)bitPos) == key)
-                {
-                    return;
-                }
-
-                //// Clear the lowest set bit in `mask` to continue with the next matching bit.
-                resultMask = ResetLowestSetBit(resultMask);
-            }
-
-            for (byte pos = 0; pos < _vectorSize; pos++)
-            {
-                if (_emptyBucket == cb)
-                {
-                    cb = h2; GetReference(_entries, index + pos) = key; Count++; return;
-                }
-
+                if (hashCode == cb && key == GetReference(_entries, index + offset)) return;
                 cb = Unsafe.AddByteOffset(ref cb, 1);
             }
 
-            jumpDistance += _vectorSize; // Increase the jump distance by 16 to probe the next cluster.
-            index += jumpDistance; // Move the index forward by the jump distance.           
-        }
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void AddVectorCPUIndexOf(uint key)
-    {
-        var index = GetHashCode(key);
-
-        var h2 = H2(index);
-
-        // Create a SIMD vector with the value of 'h2' for quick equality checks.
-        var target = Vector128.Create(h2);
-
-        // Initialize the probing jump distance to zero, which will increase with each probe iteration.
-        byte jumpDistance = 0;
-
-        ref var controlBytes = ref MemoryMarshal.GetArrayDataReference(_controlBytes);
-
-        while (true)
-        {
-            index &= _lengthMinusOne; // Use bitwise AND to ensure the index wraps around within the bounds of the map. Thus preventing out of bounds exceptions
-
-            var source = Vector128.LoadUnsafe(ref Unsafe.AddByteOffset(ref controlBytes, (nuint)index));
-
-            // Compare `source` and `target` vectors to find any positions with a matching control byte.
-            var resultMask = Vector128.Equals(source, target).ExtractMostSignificantBits();
-
-            // Loop over each set bit in `mask` (indicating matching positions).
-            while (resultMask != 0)
             {
-                // Find the lowest set bit in `mask` (first matching position).
-                var bitPos = BitOperations.TrailingZeroCount(resultMask);
+                var offset = _controlBytes.FindEmptyNoSimd(index);
 
-                // If a matching key is found, update the entry's value and return the old value.
-                if (GetReference(_entries, index + (uint)bitPos) == key)
+                if (offset != byte.MaxValue)
                 {
-                    return;
+                    index += offset;
+
+                    _controlBytes.GetReference(index) = hashCode;
+                    GetReference(_entries, index) = key;
+
+                    Count++; return;
                 }
-
-                //// Clear the lowest set bit in `mask` to continue with the next matching bit.
-                resultMask = ResetLowestSetBit(resultMask);
             }
 
-            var pos = IndexOf(ref Unsafe.AddByteOffset(ref controlBytes, (nuint)index));
-
-            if (pos != byte.MaxValue)
-            {
-                Unsafe.AddByteOffset(ref controlBytes, (nuint)index + pos) = h2;
-                GetReference(_entries, index + pos) = key; Count++; return;
-            }
-
-            jumpDistance += _vectorSize; // Increase the jump distance by 16 to probe the next cluster.
-            index += jumpDistance; // Move the index forward by the jump distance.           
-        }
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static byte IndexOf(ref byte cb)
-    {
-        if (cb == _emptyBucket) return 0;
-
-        var ul = Unsafe.As<byte, ulong>(ref cb);
-
-        //if (((ul >> 56) & 0xFF) == _emptyBucket) return 0;
-        if (((ul >> 48) & 0xFF) == _emptyBucket) return 1;
-        if (((ul >> 40) & 0xFF) == _emptyBucket) return 2;
-        if (((ul >> 32) & 0xFF) == _emptyBucket) return 3;
-        if (((ul >> 24) & 0xFF) == _emptyBucket) return 4;
-        if (((ul >> 16) & 0xFF) == _emptyBucket) return 5;
-        if (((ul >>  8) & 0xFF) == _emptyBucket) return 6;
-        if (((ul      ) & 0xFF) == _emptyBucket) return 7;
-
-        ul = Unsafe.As<byte, ulong>(ref Unsafe.AddByteOffset(ref cb, 8));
-
-        if (((ul >> 56) & 0xFF) == _emptyBucket) return 8;
-        if (((ul >> 48) & 0xFF) == _emptyBucket) return 9;
-        if (((ul >> 40) & 0xFF) == _emptyBucket) return 10;
-        if (((ul >> 32) & 0xFF) == _emptyBucket) return 11;
-        if (((ul >> 24) & 0xFF) == _emptyBucket) return 12;
-        if (((ul >> 16) & 0xFF) == _emptyBucket) return 13;
-        if (((ul >>  8) & 0xFF) == _emptyBucket) return 14;
-        if (((ul      ) & 0xFF) == _emptyBucket) return 15;
-
-        return byte.MaxValue;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void AddCPU(uint key)
-    {
-        var index = GetHashCode(key);
-
-        var h2 = H2(index);
-
-        // Initialize the probing jump distance to zero, which will increase with each probe iteration.
-        byte jumpDistance = 0, pos;
-
-        ref var controlBytes = ref MemoryMarshal.GetArrayDataReference(_controlBytes);
-
-        while (true)
-        {
-            index &= _lengthMinusOne; // Use bitwise AND to ensure the index wraps around within the bounds of the map. Thus preventing out of bounds exceptions
-
-            ref var cb = ref Unsafe.AddByteOffset(ref controlBytes, (nuint)index);
-
-            for (pos = 0; pos < _vectorSize; pos++)
-            {
-                if (h2 == cb && GetReference(_entries, index + pos) == key) return;
-
-                cb = Unsafe.AddByteOffset(ref cb, 1);
-            }
-
-            pos = IndexOf(ref Unsafe.AddByteOffset(ref controlBytes, (nuint)index));
-
-            if (pos != byte.MaxValue)
-            {
-                Unsafe.AddByteOffset(ref controlBytes, (nuint)index + pos) = h2;
-                GetReference(_entries, index + pos) = key; Count++; return;
-            }
-
-            jumpDistance += _vectorSize; // Increase the jump distance by 16 to probe the next cluster.
+            jumpDistance += ControlBytes.vectorSize; // Increase the jump distance by 16 to probe the next cluster.
             index += jumpDistance; // Move the index forward by the jump distance.           
         }
     }
