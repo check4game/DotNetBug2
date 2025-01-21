@@ -1,3 +1,20 @@
+```
+
+BenchmarkDotNet v0.14.0, Windows 10 (10.0.19045.5371/22H2/2022Update)
+Intel Core i7-2700K CPU 3.50GHz (Sandy Bridge), 1 CPU, 8 logical and 4 physical cores
+.NET SDK 9.0.102
+  [Host]     : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX
+  Job-KMGYXH : .NET 9.0.1 (9.0.124.61010), X64 RyuJIT AVX
+
+InvocationCount=1  IterationCount=10  LaunchCount=1  
+RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=5  
+
+```
+| Method        | Load | Mean       | Error    | StdDev   | Ratio | RatioSD |
+|-------------- |----- |-----------:|---------:|---------:|------:|--------:|
+| AddFindNoSimd | 0.5  |   880.5 ms | 21.11 ms | 13.96 ms |  1.00 |    0.02 |
+| AddNoSimd     | 0.5  | 1,830.0 ms | 16.57 ms | 10.96 ms |  2.08 |    0.03 |
+| AddFindSimd   | 0.5  | 1,983.1 ms |  7.27 ms |  4.81 ms |  2.25 |    0.03 |
 
 ```
 
