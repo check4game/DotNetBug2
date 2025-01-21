@@ -1,4 +1,8 @@
-# Performance slows down on "OLD" processors
+# SIMD performance slows down on "OLD" processors
+
+on Intel Core i7-10700K CPU 3.80GHz => AddFindSimd 1375ms, but AddFindNoSimd 462ms
+
+on 11th Gen Intel Core i5-11500 2.70GHz => AddFindSimd 362ms and AddFindNoSimd 372ms
 
 ```
 
