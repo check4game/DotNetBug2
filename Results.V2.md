@@ -69,3 +69,21 @@ RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=5
 | AddFindSimd   | 0.5  | 362.4 ms | 47.03 ms | 31.11 ms |  0.97 |    0.09 |
 | AddFindNoSimd | 0.5  | 372.8 ms | 26.00 ms | 17.20 ms |  1.00 |    0.06 |
 | AddNoSimd     | 0.5  | 887.3 ms | 24.56 ms | 16.24 ms |  2.38 |    0.10 |
+
+```
+
+BenchmarkDotNet v0.14.0, Windows 11 (10.0.26100.2605)
+AMD Ryzen 7 9700X, 1 CPU, 16 logical and 8 physical cores
+.NET SDK 9.0.101
+  [Host]     : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+  Job-ERQIQD : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+
+InvocationCount=1  IterationCount=10  LaunchCount=1  
+RunStrategy=Monitoring  UnrollFactor=1  WarmupCount=5  
+
+```
+| Method        | Load | Mean     | Error    | StdDev  | Ratio | RatioSD |
+|-------------- |----- |---------:|---------:|--------:|------:|--------:|
+| AddFindSimd   | 0.5  | 258.8 ms |  2.63 ms | 1.74 ms |  0.98 |    0.01 |
+| AddFindNoSimd | 0.5  | 263.1 ms |  4.83 ms | 3.19 ms |  1.00 |    0.02 |
+| AddNoSimd     | 0.5  | 675.6 ms | 10.98 ms | 7.26 ms |  2.57 |    0.04 |
